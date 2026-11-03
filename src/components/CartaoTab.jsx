@@ -99,7 +99,7 @@ export const CartaoTab = () => {
       setNlpFeedback({
         type: 'success',
         message: `Lançado com sucesso! "${result.title}" de ${formatBRL(result.amount)} classificado como [${
-          result.owner === 'sogra' ? '👵 Gasto da Sogra' : '👤 Meu Gasto'
+          result.owner === 'sogra' ? '👥 Gasto de Outros (Reembolso)' : '👤 Meu Gasto (Eu)'
         }] na categoria "${result.category}".`,
       })
       setNlpInput('')
@@ -107,7 +107,7 @@ export const CartaoTab = () => {
     } else {
       setNlpFeedback({
         type: 'error',
-        message: 'Não consegui identificar o valor. Exemplo: "Gastei 150 no cartão na farmácia, mas foi minha sogra"',
+        message: 'Não consegui identificar o valor. Exemplo: "Gastei 150 no cartão na farmácia, mas foi para um amigo"',
       })
     }
   }
@@ -221,7 +221,7 @@ export const CartaoTab = () => {
   const handleCopyWhatsAppMessage = () => {
     const msg = generateSograWhatsAppMessage(cardAnalysis.sograPurchases, cardAnalysis.sograTotal)
     navigator.clipboard.writeText(msg)
-    alert('Texto do extrato da sogra copiado! Basta colar no WhatsApp dela.')
+    alert('Texto do extrato copiado! Basta colar no WhatsApp da pessoa para acerto.')
   }
 
   // Lista de compras filtrada pela sub-aba
@@ -245,12 +245,12 @@ export const CartaoTab = () => {
             <h2 className="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
               <span>Cartão de Crédito Compartilhado</span>
               <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                Divisão Automática (Sogra)
+                Divisão Automática (Eu vs. Outros)
               </span>
             </h2>
           </div>
           <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-            Isole os gastos da sua sogra com 1 clique para que o seu orçamento pessoal considere <strong className="text-white">apenas o que você realmente gastou</strong>.
+            Isole os gastos de outras pessoas ou dependentes com 1 clique para que o seu orçamento pessoal considere <strong className="text-white">apenas o que você realmente gastou</strong>.
           </p>
         </div>
 
@@ -286,13 +286,13 @@ export const CartaoTab = () => {
           <span>Lançamento Rápido em Linguagem Natural</span>
         </h3>
         <p className="text-xs text-slate-400 mb-3">
-          Escreva como se estivesse conversando. Se disser "minha sogra" ou "foi ela", o app classifica automaticamente como dela!
+          Escreva como se estivesse conversando. Se disser "outros", "foi fulano", "amigo" ou "minha sogra", o app classifica automaticamente como gasto de terceiros!
         </p>
 
         <form onSubmit={handleNaturalLanguageSubmit} className="flex flex-col sm:flex-row gap-2">
           <input
             type="text"
-            placeholder="Ex: Gastei 150 no cartão na farmácia, mas foi minha sogra"
+            placeholder="Ex: Gastei 150 no cartão na farmácia, mas foi para um amigo"
             value={nlpInput}
             onChange={(e) => setNlpInput(e.target.value)}
             className="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500"
@@ -319,7 +319,7 @@ export const CartaoTab = () => {
         )}
       </div>
 
-      {/* Sub-Navegação por Titularidade (Meus Gastos vs Gastos da Sogra) */}
+      {/* Sub-Navegação por Titularidade (Meus Gastos vs Gastos de Outros) */}
       <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-900/60 border border-slate-800/80 p-2 sm:p-3 rounded-2xl">
         <div className="flex gap-1.5 flex-wrap">
           <button
@@ -343,7 +343,7 @@ export const CartaoTab = () => {
             }`}
           >
             <User size={14} />
-            <span>Meus Gastos Pessoais ({cardAnalysis.myCount})</span>
+            <span>Meus Gastos (Eu) ({cardAnalysis.myCount})</span>
             <span className="font-mono ml-1 font-semibold">{formatBRL(cardAnalysis.myNetTotal)}</span>
           </button>
 
@@ -356,21 +356,21 @@ export const CartaoTab = () => {
             }`}
           >
             <HeartHandshake size={14} />
-            <span>Fatura da Sogra ({cardAnalysis.sograCount})</span>
+            <span>Gastos de Outros ({cardAnalysis.sograCount})</span>
             <span className="font-mono ml-1 font-semibold">{formatBRL(cardAnalysis.sograTotal)}</span>
           </button>
         </div>
 
-        {/* Botão de Enviar Cobrança no WhatsApp para a Sogra */}
+        {/* Botão de Enviar Cobrança no WhatsApp para Outros */}
         {cardAnalysis.sograTotal > 0 && (
           <div className="flex items-center gap-1.5">
             <button
               onClick={handleSendWhatsAppSogra}
               className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-md shadow-emerald-950"
-              title="Abrir WhatsApp com o extrato formatado para a sogra"
+              title="Abrir WhatsApp com o extrato formatado para acerto"
             >
               <MessageCircle size={14} />
-              <span>Enviar no WhatsApp</span>
+              <span>Cobrança / Acerto</span>
             </button>
             <button
               onClick={handleCopyWhatsAppMessage}
@@ -383,21 +383,21 @@ export const CartaoTab = () => {
         )}
       </div>
 
-      {/* Espaço Detalhado da Sogra */}
+      {/* Espaço Detalhado de Outros */}
       {activeViewTab === 'sogra' && (
         <div className="bg-gradient-to-r from-purple-950/30 via-slate-900 to-slate-900 border border-purple-500/40 p-5 rounded-2xl space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <h3 className="text-base font-bold text-white flex items-center gap-2">
                 <HeartHandshake size={18} className="text-purple-400" />
-                <span>Extrato Detalhado de Compras da Sogra</span>
+                <span>Extrato Detalhado de Compras de Outros (A Reembolsar)</span>
               </h3>
               <p className="text-xs text-slate-300">
                 Estes valores estão <strong className="text-emerald-400">100% isolados e deduzidos</strong> do seu orçamento mensal.
               </p>
             </div>
             <div className="text-right">
-              <span className="text-[11px] text-slate-400 block">Total a ser reembolsado:</span>
+              <span className="text-[11px] text-slate-400 block">Total a ser reembolsado por outros:</span>
               <span className="text-xl font-black text-purple-400 font-mono">
                 {formatBRL(cardAnalysis.sograTotal)}
               </span>
@@ -581,7 +581,7 @@ export const CartaoTab = () => {
         {inputMode === 'auto' && (
           <div className="space-y-3">
             <label className="text-xs font-medium text-slate-300 block">
-              Copie o texto das compras no app do seu banco e cole aqui (adicione "sogra" na linha para compras dela):
+              Copie o texto das compras no app do seu banco e cole aqui (adicione "outros" na linha para compras de terceiros):
             </label>
 
             <textarea
@@ -589,9 +589,9 @@ export const CartaoTab = () => {
               onChange={(e) => setPasteText(e.target.value)}
               placeholder="Exemplo de fatura colada:
 02/11 GRUPO 3S POSTO R$ 180,00
-05/11 Droga Raia R$ 150,00 sogra
+05/11 Droga Raia R$ 150,00 outros
 07/11 iFood Restaurante R$ 58,90
-08/11 Supermercado Extra R$ 220,00 sogra"
+08/11 Supermercado Extra R$ 220,00 outros"
               rows={4}
               className="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 font-mono"
             />
@@ -662,8 +662,8 @@ export const CartaoTab = () => {
                 onChange={(e) => setManualOwner(e.target.value)}
                 className="w-full bg-slate-950 border border-purple-500/60 rounded-xl px-3 py-2 text-xs text-white font-semibold focus:outline-none focus:border-purple-400"
               >
-                <option value="me">👤 Meu Gasto Pessoal</option>
-                <option value="sogra">👵 Gasto da Minha Sogra</option>
+                <option value="me">👤 Meu Gasto Pessoal (Eu)</option>
+                <option value="sogra">👥 Gasto de Outros (A Reembolsar)</option>
               </select>
             </div>
 
@@ -679,7 +679,7 @@ export const CartaoTab = () => {
         )}
       </div>
 
-      {/* Lista de Compras Lançadas com Toggle de Titularidade (Meu vs Sogra) */}
+      {/* Lista de Compras Lançadas com Toggle de Titularidade (Eu vs Outros) */}
       <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
         <div className="flex items-center justify-between mb-3">
           <div>
@@ -687,14 +687,14 @@ export const CartaoTab = () => {
               <FileText size={17} className="text-slate-400" />
               <span>
                 {activeViewTab === 'me'
-                  ? 'Minhas Compras Pessoais'
+                  ? 'Minhas Compras Pessoais (Eu)'
                   : activeViewTab === 'sogra'
-                  ? 'Compras da Sogra'
+                  ? 'Compras de Outros (A Reembolsar)'
                   : 'Extrato Completo de Compras'}
               </span>
             </h3>
             <p className="text-[11px] text-slate-400">
-              💡 Clique no botão de titularidade (<span className="text-indigo-400 font-bold">Meu</span> ou <span className="text-purple-400 font-bold">Sogra</span>) para trocar de dono instantaneamente!
+              💡 Clique no botão de titularidade (<span className="text-indigo-400 font-bold">Eu</span> ou <span className="text-purple-400 font-bold">Outros</span>) para trocar de dono instantaneamente!
             </p>
           </div>
           <span className="text-xs text-slate-400 font-mono">
@@ -729,10 +729,10 @@ export const CartaoTab = () => {
                           ? 'bg-purple-500/20 text-purple-300 border-purple-500/40 hover:bg-purple-500/30'
                           : 'bg-slate-800 text-indigo-300 border-slate-700 hover:bg-slate-700'
                       }`}
-                      title="Clique para alternar se este gasto é Meu ou da Sogra"
+                      title="Clique para alternar se este gasto é Meu (Eu) ou de Outros"
                     >
-                      {isSogra ? <HeartHandshake size={12} /> : <User size={12} />}
-                      <span>{isSogra ? 'Sogra' : 'Meu'}</span>
+                      {isSogra ? <Users size={12} /> : <User size={12} />}
+                      <span>{isSogra ? 'Outros' : 'Eu'}</span>
                     </button>
 
                     <div>
@@ -756,7 +756,7 @@ export const CartaoTab = () => {
                           {purchase.isEssential ? '● Essencial' : '● Supérfluo'}
                         </span>
                         {isSogra && (
-                          <span className="text-purple-300 font-semibold">• Deduzido do meu custo</span>
+                          <span className="text-purple-300 font-semibold">• Deduzido do meu custo (A reembolsar)</span>
                         )}
                       </span>
                     </div>

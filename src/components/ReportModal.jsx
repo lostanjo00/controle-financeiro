@@ -216,11 +216,11 @@ export const ReportModal = ({ isOpen, onClose }) => {
             )}
           </div>
 
-          {/* 4. Diagnóstico de Cartão de Crédito Compartilhado (Sogra) */}
+          {/* 4. Diagnóstico de Cartão de Crédito Compartilhado (Eu vs. Outros) */}
           {(cardAnalysis.grossTotal > 0 || cardAnalysis.invoiceTotal > 0) && (
             <div>
               <h2 className="text-sm font-bold uppercase tracking-wider text-slate-300 mb-2 flex items-center gap-2 border-l-2 border-indigo-500 pl-2">
-                4. Cartão Compartilhado & Divisão com a Sogra
+                4. Cartão Compartilhado & Gastos de Terceiros / Outros
               </h2>
               <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl space-y-3 text-xs">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pb-3 border-b border-slate-800">
@@ -231,24 +231,24 @@ export const ReportModal = ({ isOpen, onClose }) => {
                     </span>
                   </div>
                   <div>
-                    <span className="text-purple-300 block text-[11px]">(-) Gastos da Sogra (Dela):</span>
+                    <span className="text-purple-300 block text-[11px]">(-) Gastos de Outros (A Reembolsar):</span>
                     <span className="text-base font-bold text-purple-400 font-mono">
                       -{formatBRL(cardAnalysis.sograTotal)}
                     </span>
                   </div>
                   <div>
-                    <span className="text-emerald-300 block text-[11px]">(=) Minha Fatura Líquida:</span>
+                    <span className="text-emerald-300 block text-[11px]">(=) Minha Fatura Líquida (Eu):</span>
                     <span className="text-base font-bold text-emerald-400 font-mono">
                       {formatBRL(cardAnalysis.myReconciledNetTotal)}
                     </span>
                   </div>
                 </div>
 
-                {/* Detalhe dos Itens da Sogra para Comprovante */}
+                {/* Detalhe dos Itens de Outros para Comprovante */}
                 {cardAnalysis.sograPurchases.length > 0 && (
                   <div>
                     <span className="font-bold text-purple-300 block mb-1 text-xs">
-                      Itens Comprados pela Sogra (Total a Transferir: {formatBRL(cardAnalysis.sograTotal)}):
+                      Itens Comprados por Outros (Total a Transferir/Reembolsar: {formatBRL(cardAnalysis.sograTotal)}):
                     </span>
                     <ul className="list-disc list-inside space-y-0.5 text-slate-300 text-[11px]">
                       {cardAnalysis.sograPurchases.map((sp) => (
@@ -300,7 +300,7 @@ export const ReportModal = ({ isOpen, onClose }) => {
             </h3>
             <ol className="list-decimal list-inside space-y-1.5 text-xs text-slate-300">
               <li>
-                <strong>Cobrança Pontual da Fatura Compartilhada:</strong> Envie o resumo detalhado da fatura para sua sogra antes da data de vencimento para garantir que o dinheiro entre na sua conta a tempo.
+                <strong>Cobrança Pontual da Fatura Compartilhada:</strong> Envie o resumo detalhado das compras compartilhadas antes da data de vencimento para garantir que o dinheiro do reembolso entre na sua conta a tempo.
               </li>
               <li>
                 <strong>Blindagem de Sobrevivência:</strong> Priorize pagar mercado, luz, água e moradia antes de qualquer pagamento mínimo de cartão ou banco.

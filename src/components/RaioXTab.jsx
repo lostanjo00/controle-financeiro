@@ -186,7 +186,7 @@ export const RaioXTab = ({ setActiveTab }) => {
         </div>
       </div>
 
-      {/* Destaque do Cartão Compartilhado com a Sogra */}
+      {/* Destaque do Cartão Compartilhado com Terceiros (Eu vs Outros) */}
       {cardAnalysis.sograTotal > 0 && (
         <div
           onClick={() => setActiveTab && setActiveTab('cartao')}
@@ -198,15 +198,15 @@ export const RaioXTab = ({ setActiveTab }) => {
             </div>
             <div>
               <span className="text-xs font-bold text-white block">
-                Cartão Compartilhado Ativo: Gastos da Sogra Isolados
+                Cartão Compartilhado Ativo: Gastos de Outros Isolados
               </span>
               <p className="text-[11px] text-slate-300">
-                <strong className="text-purple-300">{formatBRL(cardAnalysis.sograTotal)}</strong> em compras dela foram deduzidos automaticamente da fatura total ({formatBRL(cardAnalysis.invoiceTotal)}). Sua fatura líquida real é de <strong className="text-emerald-400">{formatBRL(cardAnalysis.myReconciledNetTotal)}</strong>.
+                <strong className="text-purple-300">{formatBRL(cardAnalysis.sograTotal)}</strong> em compras de terceiros foram deduzidos automaticamente da fatura total ({formatBRL(cardAnalysis.invoiceTotal)}). Sua fatura líquida real é de <strong className="text-emerald-400">{formatBRL(cardAnalysis.myReconciledNetTotal)}</strong>.
               </p>
             </div>
           </div>
           <span className="text-xs text-purple-400 font-semibold flex items-center gap-1 shrink-0 self-end sm:self-auto">
-            <span>Ver Fatura da Sogra</span>
+            <span>Ver Gastos de Outros</span>
             <ArrowRight size={13} />
           </span>
         </div>

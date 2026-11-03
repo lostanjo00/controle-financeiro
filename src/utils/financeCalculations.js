@@ -518,17 +518,37 @@ export const autoCategorizePurchase = (rawTitle = '', customRules = {}) => {
 }
 
 /**
- * Detector de Titularidade (Meus Gastos vs Gastos da Sogra)
+ * Detector de Titularidade (Meus Gastos vs Gastos de Outros / Compartilhado)
  */
 export const detectPurchaseOwner = (rawText = '') => {
   const t = rawText.toLowerCase()
   if (
     t.includes('sogra') ||
     t.includes('dela') ||
-    t.includes('sogrinha') ||
-    t.includes('mae da esposa') ||
-    t.includes('mãe da esposa') ||
-    t.includes('dona ') ||
+    t.includes('dele') ||
+    t.includes('outros') ||
+    t.includes('outro') ||
+    t.includes('outra') ||
+    t.includes('terceiro') ||
+    t.includes('terceiros') ||
+    t.includes('amigo') ||
+    t.includes('amiga') ||
+    t.includes('parente') ||
+    t.includes('familiar') ||
+    t.includes('irmão') ||
+    t.includes('irmao') ||
+    t.includes('irmã') ||
+    t.includes('irma') ||
+    t.includes('filho') ||
+    t.includes('filha') ||
+    t.includes('esposa') ||
+    t.includes('marido') ||
+    t.includes('namorada') ||
+    t.includes('namorado') ||
+    t.includes('compartilhado') ||
+    t.includes('reembolso') ||
+    t.includes('(outros)') ||
+    t.includes('[outros]') ||
     t.includes('(sogra)') ||
     t.includes('[sogra]')
   ) {
@@ -539,7 +559,7 @@ export const detectPurchaseOwner = (rawText = '') => {
 
 /**
  * Parser de Linguagem Natural para Compras Rápidas
- * Ex: "Gastei 150 no cartão na farmácia, mas foi minha sogra"
+ * Ex: "Gastei 150 no cartão na farmácia, mas foi para um amigo"
  */
 export const parseNaturalLanguagePurchase = (input = '', customRules = {}) => {
   if (!input || input.length < 3) return null
@@ -552,18 +572,18 @@ export const parseNaturalLanguagePurchase = (input = '', customRules = {}) => {
   const amount = parseFloat(rawAmountStr)
   if (isNaN(amount) || amount <= 0) return null
 
-  // 2. Detecção de titularidade (Sogra vs Meu)
+  // 2. Detecção de titularidade (Outros vs Eu)
   const owner = detectPurchaseOwner(input)
 
   // 3. Extração da descrição e categoria
   let title = input
     .replace(priceMatch[0], '')
-    .replace(/(gastei|comprei|paguei|no cartão|no cartao|cartão|cartao|de|em|para|foi|minha sogra|sogra|dela|mas)/gi, ' ')
+    .replace(/(gastei|comprei|paguei|no cartão|no cartao|cartão|cartao|de|em|para|foi|minha sogra|sogra|dela|dele|outros|outro|terceiros|amigo|amiga|mas)/gi, ' ')
     .replace(/\s+/g, ' ')
     .trim()
 
   if (!title || title.length < 2) {
-    title = owner === 'sogra' ? 'Compra da Sogra' : 'Compra no Cartão'
+    title = owner === 'sogra' ? 'Compra Compartilhada (Outros)' : 'Compra no Cartão'
   }
 
   const catInfo = autoCategorizePurchase(title || input, customRules)
@@ -710,7 +730,7 @@ export const analyzeCardPurchases = (purchases = [], declaredInvoiceTotal = 0) =
   const mySuperfluousPercent = myNetTotal > 0 ? (mySuperfluousTotal / myNetTotal) * 100 : 0
 
   if (sograTotal > 0) {
-    verdict = `Cartão Compartilhado Ativo: A fatura bruta totalizou ${formatBRL(invoiceTotal)}. Descontando os gastos da sua sogra (${formatBRL(sograTotal)}), a sua responsabilidade líquida é de ${formatBRL(myReconciledNetTotal)}.`
+    verdict = `Cartão Compartilhado Ativo: A fatura bruta totalizou ${formatBRL(invoiceTotal)}. Descontando os gastos de outras pessoas (${formatBRL(sograTotal)}), a sua responsabilidade líquida é de ${formatBRL(myReconciledNetTotal)}.`
   } else if (mySuperfluousPercent > 50) {
     verdict = `Alerta de Risco: Mais de ${mySuperfluousPercent.toFixed(0)}% da sua fatura líquida foi em supérfluos e delivery. Foco em reduzir compras pessoais.`
   } else {
@@ -744,15 +764,15 @@ export const analyzeCardPurchases = (purchases = [], declaredInvoiceTotal = 0) =
 }
 
 /**
- * Gera mensagem formatada para envio via WhatsApp para a Sogra
+ * Gera mensagem formatada para envio via WhatsApp para Acerto de Compras de Outros
  */
 export const generateSograWhatsAppMessage = (sograPurchases = [], sograTotal = 0) => {
-  let msg = `Olá! Segue o detalhamento das suas compras no cartão deste mês:\n\n`
+  let msg = `Olá! Segue o extrato detalhado das compras compartilhadas no cartão para acerto/reembolso deste mês:\n\n`
   sograPurchases.forEach((item, idx) => {
     msg += `${idx + 1}. ${item.title}: ${formatBRL(item.amount)}\n`
   })
   msg += `\n-------------------------\n`
-  msg += `*Total a transferir: ${formatBRL(sograTotal)}*\n`
+  msg += `*Total a transferir/reembolsar: ${formatBRL(sograTotal)}*\n`
   msg += `(Valores já deduzidos da fatura principal)`
   return msg
 }
@@ -801,8 +821,8 @@ export const DEFAULT_FINANCE_DATA = {
   cardPurchases: [
     { id: '1', title: 'Posto Grupo 3S Gasolina', amount: 180.0, category: 'Transporte & Combustível', isEssential: true, owner: 'me', date: new Date().toISOString() },
     { id: '2', title: 'iFood Burguer & Batata', amount: 64.9, category: 'Alimentação Fora & Delivery', isEssential: false, owner: 'me', date: new Date().toISOString() },
-    { id: '3', title: 'Droga Raia Remédios (Sogra)', amount: 150.0, category: 'Farmácia & Saúde', isEssential: true, owner: 'sogra', date: new Date().toISOString() },
-    { id: '4', title: 'Supermercado Extra (Sogra)', amount: 220.0, category: 'Mercado Essencial', isEssential: true, owner: 'sogra', date: new Date().toISOString() },
+    { id: '3', title: 'Droga Raia Remédios (Outros)', amount: 150.0, category: 'Farmácia & Saúde', isEssential: true, owner: 'sogra', date: new Date().toISOString() },
+    { id: '4', title: 'Supermercado Extra (Outros)', amount: 220.0, category: 'Mercado Essencial', isEssential: true, owner: 'sogra', date: new Date().toISOString() },
     { id: '5', title: 'Netflix Assinatura', amount: 44.9, category: 'Assinaturas & Serviços', isEssential: false, owner: 'me', date: new Date().toISOString() },
   ],
   declaredInvoiceTotal: 659.8,

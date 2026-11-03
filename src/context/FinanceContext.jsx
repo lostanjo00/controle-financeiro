@@ -396,7 +396,7 @@ export const FinanceProvider = ({ children }) => {
         addLeak,
         removeLeak,
         clearLeaks,
-        // Cartão Compartilhado & Sogra
+        // Cartão Compartilhado & Terceiros (Eu vs Outros)
         addCardPurchase,
         addBulkCardPurchases,
         updateCardPurchase,
